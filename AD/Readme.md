@@ -1,20 +1,27 @@
 ## Methodology for Active Direcctory
 
-# Start with Scanning
-* Tools : Nmap
-* Command :  nmap -A -T4 IP_ADDR
-* Example : nmap -A -T4 10.10.11.42
-* Flags:
-    1. -A: This is an "aggressive" scan option. It enables several advanced features in Nmap:
-        * OS Detection: Nmap attempts to determine the operating system of the target.
-        * Version Detection: It checks the versions of the services running on open ports.
-        * Script Scanning: Nmap runs a set of default scripts that can help identify potential vulnerabilities and other information about the target.
-        * Traceroute: It attempts to map out the network path to the target.
-    2. -T4: This flag sets the timing template to "4", which speeds up the scan but can be more detectable by intrusion detection systems (IDS) or firewalls. It strikes a balance between speed and stealth.
+## Table of Contents
+- [Start with Nmap Scanning](#start-with-nmap-scanning)
+- [SMB Enumeration](#smb-enumeration)
+- [LLMNR](#llmnr)
+- [SMB Relay](#smb-relay)
+- [IPV6 Dns takeover mitm6](#ipv6-dns-takeover-mitm6)
+- [Password Spraying](#password-spraying)
+- [Domain Enumeration](#domain-enumeration)
+- [Pass Attacks](#pass-attacks)
+- [Kerberoasting](#kerberoasting)
+- [Golden Ticket](#golden-ticket)
+- [Mimikatz](#mimikatz)
+- [Misc](#misc)
+
+## Start with Nmap Scanning
+| Tools         |   Command     |    Description  |   Flags Description     | Example             |
+| ------------- | ------------- | -------------   |   -------------         | -------------       |
+| Nmap          | nmap -A -T4 IP_ADDR  |    This command performs an aggressive scan with OS detection, version detection, script scanning, and traceroute.           |     <ul><li>-A: Enables OS detection, version detection, script scanning, and traceroute.</li><li> -T4: Sets timing template to 4 for faster scan.</li></ul>                   |  nmap -A -T4 10.10.11.42 |               
 
    Nmap has several timing templates (T0 to T5), where T0 is the slowest and stealthiest, and T5 is the fastest but most intrusive. T4 is generally considered aggressive but not as reckless as T5.
 
-# SMB scanning
+## SMB Enumeration
 * Tools : smbclient, smbmap, enum4linux,..
 1. smbclient: smbclient is a command-line tool that is part of the Samba suite, used to interact with SMB/CIFS shares.
    1. List shares on a target SMB server:
@@ -34,49 +41,36 @@
        * Then, once you're logged in:
             * smb: \> ls
             * smb: \> get file.txt
-2. smbmap
-smbmap is a tool that allows you to enumerate SMB shares, check permissions, and gain insight into the files and directories within those shares.
+2. smbmap: smbmap is a tool that allows you to enumerate SMB shares, check permissions, and gain insight into the files and 
+           directories within those shares.
+    1. Basic usage
+       * Command : smbmap -H <ip> -u <username> -p <password>
+       * -H <ip>: The target host's IP address.
+       * -u <username>: The username to authenticate with.
+       * -p <password>: The password to authenticate with.
+       * Example: smbmap -H 192.168.1.1 -u guest -p guest
+    2. List shares and check permissions:
+       * Command : smbmap -H <ip> -u <username> -p <password>
+       * This command will list all available shares on the target and show the read/write permissions for each share.
+    3. Check a specific share:
+       * smbmap -H <ip> -u <username> -p <password> -R /path/to/share
+       * This will list the contents of a specific folder in the SMB share.
 
-Basic usage:
+3. enum4linux : enum4linux is a powerful tool for gathering information from SMB servers. It is primarily used for 
+                enumerating users, shares, and other details related to Windows systems. It uses the SMB protocol to 
+                interact with the target.
 
-
-smbmap -H <ip> -u <username> -p <password>
--H <ip>: The target host's IP address.
--u <username>: The username to authenticate with.
--p <password>: The password to authenticate with.
-Example:
-
-
-smbmap -H 192.168.1.1 -u guest -p guest
-List shares and check permissions:
-
-
-smbmap -H <ip> -u <username> -p <password>
-This command will list all available shares on the target and show the read/write permissions for each share.
-
-Check a specific share:
-smbmap -H <ip> -u <username> -p <password> -R /path/to/share
-This will list the contents of a specific folder in the SMB share.
-
-3. enum4linux
-enum4linux is a powerful tool for gathering information from SMB servers. It is primarily used for enumerating users, shares, and other details related to Windows systems. It uses the SMB protocol to interact with the target.
-
-Basic usage:
-
-
-enum4linux -a <ip>
--a: This flag performs an aggressive scan, retrieving as much information as possible, including users, shares, and other AD-related data.
-<ip>: Replace with the target IP address.
-Example:
-
-
-enum4linux -a 192.168.1.1
-This command will attempt to gather information such as:
-
-User accounts and groups
-SMB shares
-Operating system information
-Domain information
+      1. Basic usage:
+         * Command : enum4linux -a IPADDR
+         * -a: This flag performs an aggressive scan, retrieving as much information as possible, including users, shares, 
+                 and other AD-related data.
+         * IPADDR: Replace with the target IP address.
+         * Example: enum4linux -a 192.168.1.1
+         * This command will attempt to gather information such as:
+               . User accounts and groups
+           b. SMB shares
+           c. Operating system information
+           d. Domain information
 Get information about users:
 
 
@@ -104,7 +98,7 @@ Example:
 
 smbclient.py <domain>/<username>:<password>@<target-ip>
 
-# Remote shell
+## Remote shell
 
 Potential Remote Shell Access
 From the ports listed, Port 445 (SMB) and Port 593 (RPC over HTTP/WinRM) are the most likely candidates for obtaining a remote shell, given you have valid credentials.
@@ -132,25 +126,25 @@ Port 135 (RPC) can potentially be leveraged for remote code execution if a vulne
 The other ports (53, 88, 389, 636, 3268, 3269) are primarily for enumeration and information gathering, but they do not directly provide a way to get a remote shell.
 
 
-# LLMNR
+## LLMNR
 
-# SMB Relay
+## SMB Relay
 
-# IPV6/mitmm6
+## IPV6 Dns takeover mitm6
 
-# Password Spraying 
+## Password Spraying 
 
-# Domain Enumeration
+## Domain Enumeration
 
-# Pass Attacks
+## Pass Attacks
 
-# Kerberoasting 
+## Kerberoasting 
 
 # Golden Ticket
 
-# Mimikatz
+## Mimikatz
 
-# Misc
+## Misc
 How to add the ip to /etc/hosts file easily
 echo "10.10.10.100  active.htb" >> /etc/hosts
 
@@ -163,6 +157,17 @@ How to link the applications so that they can run from anywhere
 * https://unix.stackexchange.com/questions/3809/how-can-i-make-a-program-executable-from-everywhere
 * https://www.hackingarticles.in/msfvenom-cheatsheet-windows-exploitation/
 * https://www.hackingarticles.in/metasploit-for-pentester-mimikatz/
+* https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables
+* https://stackoverflow.com/questions/19950648/how-to-write-lists-inside-a-markdown-table
+* https://github.com/NoorQureshi/kali-linux-cheatsheet/blob/master/README.md#nmap-commands
+* https://github.com/irgoncalves/smbclient_cheatsheet
+* https://github.com/Kitsun3Sec/Pentest-Cheat-Sheets/tree/master
+* https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
+
+| First Header  | Second Header |
+| ------------- | ------------- |
+| Content Cell  | Content Cell  |
+| Content Cell  | Content Cell  |
 
 
 
