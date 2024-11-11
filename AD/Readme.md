@@ -1,20 +1,34 @@
-## Methodology for Active Direcctory
+# Methodology for Active Direcctory
 
-## Table of Contents
-- [Start with Nmap Scanning](#start-with-nmap-scanning)
-- [SMB Enumeration](#smb-enumeration)
-- [Remote Shell Access via Ports](#remote-shell-access-via-ports)
-- [LLMNR](#llmnr)
-- [SMB Relay](#smb-relay)
-- [IPV6 Dns takeover mitm6](#ipv6-dns-takeover-mitm6)
-- [Password Spraying](#password-spraying)
-- [Domain Enumeration](#domain-enumeration)
-- [Pass Attacks](#pass-attacks)
-- [Kerberoasting](#kerberoasting)
-- [Golden Ticket](#golden-ticket)
-- [Mimikatz](#mimikatz)
-- [Miscellaneous (Troubleshooting and Tips)](#miscellaneous-(troubleshooting-and-tips)
-- [Resources](#resources)
+# Table of Contents
+
+1. [Start with Nmap Scanning](#start-with-nmap-scanning)
+2. [SMB Enumeration](#smb-enumeration)
+3. [Remote Shell Access via Ports](#remote-shell-access-via-ports)
+4. [LLMNR](#llmnr)
+5. [SMB Relay](#smb-relay)
+6. [IPV6 DNS Takeover mitm6](#ipv6-dns-takeover-mitm6)
+7. [Password Spraying](#password-spraying)
+8. [Domain Enumeration](#domain-enumeration)
+9. [Pass Attacks](#pass-attacks)
+10. [Kerberoasting](#kerberoasting)
+11. [Golden Ticket](#golden-ticket)
+12. [Mimikatz](#mimikatz)
+13. [LDAP Enumeration](#ldap-enumeration)
+14. [Trusts and Relationships](#trusts-and-relationships)
+15. [DCOM/Remote WMI Enumeration and Exploitation](#dcomremote-wmi-enumeration-and-exploitation)
+16. [Domain Admins Group Enumeration](#domain-admins-group-enumeration)
+17. [Dumpert (Kerberos Ticket Dumping)](#dumpert-kerberos-ticket-dumping)
+18. [Abusing Group Policy](#abusing-group-policy-gpp-ms-ds-consistency-flag)
+19. [DCShadow Attack](#dcshadow-attack)
+20. [ADCS (Active Directory Certificate Services) Attacks](#adcs-active-directory-certificate-services-attacks)
+21. [Lateral Movement (Pivoting)](#lateral-movement-pivoting)
+22. [Privilege Escalation](#privilege-escalation)
+23. [Exfiltration (Data Exfiltration Techniques)](#exfiltration-data-exfiltration-techniques)
+24. [Post-Exploitation (Persistence, Covering Tracks)](#post-exploitation-persistence-covering-tracks)
+25. [Miscellaneous (Troubleshooting and Tips)](#miscellaneous-troubleshooting-and-tips)
+26. [Resources](#resources)
+
 
 # Start with Nmap Scanning
 <table>
@@ -442,22 +456,79 @@ Be aware that security configurations and protections (like firewalls and strong
 
 ## LLMNR
 
+Useful for DNS poisoning and man-in-the-middle (MITM) attacks, often leading to credential capture.
+
 ## SMB Relay
+A classic attack for relaying NTLM hashes between vulnerable machines.
 
 ## IPV6 Dns takeover mitm6
+Focuses on IPv6-based DNS poisoning and MITM, which can be an overlooked attack vector.
 
 ## Password Spraying 
+This attack is very effective against AD environments, where brute-force login attempts are made with commonly used passwords.
 
 ## Domain Enumeration
+One of the most crucial steps to gather information about the domain, trusts, and related services.
 
 ## Pass Attacks
+This would likely include Pass-the-Hash, Pass-the-Ticket, and other related techniques.
 
 ## Kerberoasting 
+A key technique for stealing service account credentials.
 
 # Golden Ticket
+Crucial for simulating attacks that allow full domain compromise by forging TGTs.
 
 ## Mimikatz
+A powerful tool for interacting with the Windows memory and extracting credentials, tickets, and hashes.
 
+## LDAP Enumeration
+Why: LDAP (Lightweight Directory Access Protocol) is a core protocol for Active Directory. You can extract a lot of information (users, groups, organizational units) via LDAP enumeration.
+Tools: ldapsearch, nmap with LDAP scripts, enum4linux.
+
+## Trusts and Relationships
+Why: AD trusts (domain and forest trusts) are often an overlooked attack surface. Understanding and exploiting trusts can give attackers access to multiple domains.
+Tools: BloodHound, PowerView, PowerSploit.
+
+## DCOM/Remote WMI Enumeration and Exploitation
+Why: Remote WMI and DCOM (Distributed Component Object Model) are often misconfigured and can be used for remote code execution or credential gathering.
+Tools: wmiexec.py (from Impacket), PowerShell Remoting.
+
+## Domain Admins Group Enumeration
+Why: Identifying members of the Domain Admins group is critical, as these are the highest-level accounts in AD.
+Tools: PowerView, BloodHound, Get-ADGroupMember (PowerShell cmdlet).
+
+## Dumpert (Kerberos Ticket Dumping)
+Why: Similar to Kerberoasting but involves dumping tickets from memory.
+Tools: Dumpert, Mimikatz.
+
+## Abusing Group Policy (GPP, MS-DS-Consistency-Flag)
+Why: Misconfigurations in Group Policy settings (like Group Policy Preferences) can lead to credentials being exposed.
+Tools: PowerView, GPPPasswordFinder, mimikatz.
+
+## DCShadow Attack
+Why: A sophisticated technique that allows attackers to alter the AD schema or replicate fake domain controllers to compromise a domain.
+Tools: DCShadow, PowerShell.
+
+## ADCS (Active Directory Certificate Services) Attacks
+Why: If ADCS is in use, compromising it can allow for the issuance of rogue certificates.
+Tools: Certipy, ADCSTools, Certreq.
+
+## Lateral Movement (Pivoting)
+Why: Once inside the network, lateral movement (pivoting) becomes critical to accessing sensitive systems (e.g., domain controllers or high-value servers).
+Tools: PsExec, WinRM, RDP, WMI.
+
+## Privilege Escalation
+Why: After gaining initial access, privilege escalation techniques like exploiting unquoted service paths, DLL hijacking, or exploiting weak permissions should be covered.
+Tools: PrivescCheck, PowerUp, Loot, WinPwn.
+
+## Exfiltration (Data Exfiltration Techniques)
+Why: After successfully gaining access, you may want to document methods for exfiltrating sensitive data from AD or from other servers within the environment.
+Tools: PowerShell, Impacket, Rclone, Netcat.
+
+##  Post-Exploitation (Persistence, Covering Tracks)
+Why: This section could cover methods to maintain access or clean up evidence of your penetration testing activities.
+Tools: Empire, Covenant, Metasploit, PowerSploit.
 
 ## Miscellaneous (Troubleshooting and Tips)
 
